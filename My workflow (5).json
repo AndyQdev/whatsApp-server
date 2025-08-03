@@ -1,0 +1,936 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "f5b0365d-ee2e-4901-8b8b-7f9ab737c06f",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -256,
+        640
+      ],
+      "id": "d0b5c7c3-9d4b-4ca9-a8d9-d3d4479972d6",
+      "name": "Webhook",
+      "webhookId": "f5b0365d-ee2e-4901-8b8b-7f9ab737c06f"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Mapear mensaje').item.json.mensaje }}",
+        "options": {
+          "systemMessage": "=Eres un asistente personal inteligente y empático. Tu tarea es analizar el contexto proporcionado y generar una respuesta natural, útil y conversacional para el usuario.\n\n## TU ROL:\n- Asistente Personal: Eres un secretario virtual que ayuda a organizar la vida del usuario\n- Comunicación Natural: Responde como un humano amigable y profesional\n- Útil y Práctico: Proporciona información relevante sin abrumar\n- Empático: Entiende las necesidades del usuario y responde apropiadamente\n- Experto Universal: Puedes satisfacer cualquier necesidad del usuario, desde organización hasta conocimiento general\n\n## CONTEXTO DISPONIBLE:\nEl contexto contiene información sobre las operaciones realizadas en el sistema del usuario:\n- Consultas: Lo que se buscó (tareas, recordatorios, eventos, etc.)\n- Creaciones: Lo que se agregó nuevo\n- Actualizaciones: Lo que se modificó\n- Eliminaciones: Lo que se borró\n- Errores: Problemas que ocurrieron\n- Información del usuario: Datos personales, metas, preferencias\n- Preguntas generales: Consultas no específicas del sistema\n\n## ESTILO DE COMUNICACIÓN:\n- Natural: Habla como un humano real\n- Conversacional: Usa \"tú\" y un tono amigable\n- Claro: Explica las cosas de forma sencilla\n- Útil: Enfócate en lo que el usuario necesita saber\n- Breve pero completo: No seas verboso, pero cubre lo importante\n- Experto: Demuestra conocimiento en cualquier área que el usuario pregunte\n\n## TIPOS DE RESPUESTAS:\n\n### PARA CONSULTAS DEL SISTEMA:\n- Una sola consulta: \"Tienes X tareas pendientes: [nombres principales]. [Comentario útil]\"\n- Múltiples consultas: \"Revisé tu agenda: [resumen organizado]. [Observación útil]\"\n\n### PARA CREACIONES:\n- Una creación: \"Perfecto, agregué [nombre] a tu [tipo]. [Detalle relevante]\"\n- Múltiples creaciones: \"Listo, creé [lista de elementos]. [Comentario organizativo]\"\n\n### PARA ACTUALIZACIONES:\n- \"Actualicé [elemento] con [cambios]. [Estado actual]\"\n\n### PARA ELIMINACIONES:\n- \"Eliminé [elemento] de tu [tipo]. [Confirmación]\"\n\n### PARA ERRORES:\n- \"No pude [acción] porque [razón]. [Sugerencia de solución]\"\n\n### PARA PREGUNTAS GENERALES (intencion_general):\n- Preguntas sobre ti: \"Soy tu asistente personal inteligente. Puedo ayudarte con organización, tareas, recordatorios, y responder cualquier pregunta que tengas.\"\n- Conversación casual: \"¡Hola! Estoy aquí para ayudarte. ¿En qué puedo asistirte hoy?\"\n- Conocimiento general: Proporciona información precisa y útil sobre cualquier tema\n- Ayuda: \"Puedo ayudarte con organización personal, responder preguntas, y mucho más. ¿Qué necesitas?\"\n\n### PARA COMBINACIONES:\n- Organiza la información por relevancia\n- Prioriza lo más importante para el usuario\n- Conecta las operaciones de forma lógica\n\n## EJEMPLOS:\n\n### Consulta + Creación:\nContexto: \"Tareas: 5 tareas pendientes (3 trabajo, 2 personal) | tarea 'Reunión importante' creada exitosamente\"\nRespuesta: \"Tienes 5 tareas pendientes, principalmente de trabajo. Agregué la reunión importante a tu lista. ¿Te gustaría que priorice alguna tarea específica?\"\n\n### Pregunta General:\nContexto: \"Usuario: Juan | Tareas pendientes: 3 | Metas activas: 2 | Hábitos activos: 1\"\nRespuesta: \"¡Hola Juan! Soy tu asistente personal inteligente. Puedo ayudarte con organización, recordatorios, tareas, y responder cualquier pregunta que tengas. Veo que tienes 3 tareas pendientes, 2 metas activas y 1 hábito activo. ¿En qué puedo ayudarte hoy?\"\n\n### Conocimiento General:\nContexto: \"Usuario preguntó: ¿Cuál es la capital de Francia?\"\nRespuesta: \"La capital de Francia es París. Es una ciudad hermosa conocida por su cultura, arte, moda y gastronomía. ¿Te gustaría saber algo más sobre Francia o tienes alguna otra pregunta?\"\n\n## LO QUE NO HACER:\n- No menciones detalles técnicos del sistema\n- No uses lenguaje robótico o formal excesivo\n- No repitas información innecesariamente\n- No ignores errores o problemas importantes\n- No seas demasiado largo o verboso\n- No digas \"no puedo\" sin ofrecer alternativas\n\n## LO QUE SÍ HACER:\n- Sé natural y conversacional\n- Organiza la información de forma útil\n- Proporciona contexto relevante\n- Sugiere acciones cuando sea apropiado\n- Sé empático con errores o problemas\n- Mantén un tono positivo y útil\n- Demuestra conocimiento en cualquier área\n- Ofrece alternativas cuando no puedas hacer algo específico\n- Responde cualquier pregunta del usuario con conocimiento\n\n## FORMATO DE RESPUESTA:\nResponde directamente con el mensaje para el usuario. No uses formato especial, solo texto natural y conversacional.\n\n---\n\nMensaje del usuario: {{ $('Mapear mensaje').item.json.mensaje }}\nContexto del sistema: {{ $json.contexto }}\nLa fecha y hora de hoy es: {{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        2480,
+        640
+      ],
+      "id": "2ab44a36-7fec-447a-958c-42b38b09c986",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  try {\n    const llmResponse = $input.first().json.output;\n    \n    // Intentar parsear el JSON de la respuesta del LLM\n    let jsonData;\n    try {\n      // Buscar JSON en la respuesta (por si hay texto adicional)\n      const jsonMatch = llmResponse.match(/\\{[\\s\\S]*\\}/);\n      if (jsonMatch) {\n        jsonData = JSON.parse(jsonMatch[0]);\n      } else {\n        jsonData = JSON.parse(llmResponse);\n      }\n    } catch (parseError) {\n      return {\n        json: {\n          error: 'Error al parsear JSON del LLM',\n          originalResponse: llmResponse,\n          parseError: parseError.message\n        }\n      };\n    }\n    \n    // Validar que tenga la estructura básica\n    if (!jsonData.intencion) {\n      return {\n        json: {\n          error: 'JSON no contiene campo \"intencion\"',\n          parsedData: jsonData\n        }\n      };\n    }\n    \n    return {\n      json: {\n        parsedIntention: jsonData,\n        originalMessage: $('Mapear mensaje').item.json.mensaje,\n        remoteJid: $('Mapear mensaje').item.json.remoteJid\n      }\n    };\n  } catch (error) {\n    return {\n      json: {\n        error: 'Error general en parsing',\n        errorMessage: error.message\n      }\n    };\n  }\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        304
+      ],
+      "id": "43491019-aad7-445a-864b-3d0c9fa53f41",
+      "name": "Parsear Respuesta JSON"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Edit Fields').item.json.hasAudio }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "equals"
+                    },
+                    "id": "be9dbcd5-0882-4ce9-9822-305865fae492"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "6a0ec742-7f93-4ea1-af39-35d410da1c1a",
+                    "leftValue": "={{ $('Edit Fields').item.json.hasText }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Texto"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        240,
+        640
+      ],
+      "id": "d33cd41e-2b37-48f5-94ee-11128fbd25e5",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.error }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists"
+                    },
+                    "id": "validation-error-001"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Error"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "validation-success-001",
+                    "leftValue": "={{ $json.parsedIntention.intencion }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "name": "filter.operator.exists"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Válido"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1824,
+        320
+      ],
+      "id": "3870b602-d77f-4e60-aaa9-118c36c19ac7",
+      "name": "Validar Intención"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9ab83bb8-0010-4684-ae19-79e992cb39ea",
+              "name": "remoteJid",
+              "value": "={{ $json.body.data.messages.key.remoteJid }}",
+              "type": "string"
+            },
+            {
+              "id": "26e6f1fb-f66d-4080-a01e-9e889cb2156e",
+              "name": "body",
+              "value": "={{ $json.body }}",
+              "type": "object"
+            },
+            {
+              "id": "62738a51-4284-40b5-a761-0dd788569ab6",
+              "name": "text",
+              "value": "={{ $json.body.data.messages.message.extendedTextMessage.text }}",
+              "type": "string"
+            },
+            {
+              "id": "audio-url",
+              "name": "audioUrl",
+              "value": "={{ $json.body.data.messages.message.audioMessage.url }}",
+              "type": "string"
+            },
+            {
+              "id": "message-type",
+              "name": "messageType",
+              "value": "={{ $json.body.data.messages.message.audioMessage ? 'audio' : 'text' }}",
+              "type": "string"
+            },
+            {
+              "id": "has-text",
+              "name": "hasText",
+              "value": "={{ $json.body.data.messages.message.extendedTextMessage ? true : false }}",
+              "type": "boolean"
+            },
+            {
+              "id": "has-audio",
+              "name": "hasAudio",
+              "value": "={{ $json.body.data.messages.message.audioMessage ? true : false }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -32,
+        640
+      ],
+      "id": "e11d98ab-0abd-4dd0-b263-42598b4baab3",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "divisual@divisualproject.com",
+          "mode": "list",
+          "cachedResultName": "divisual@divisualproject.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', ``, 'string') }}",
+          "sendUpdates": "all",
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        2752,
+        1008
+      ],
+      "id": "241c02c8-508e-486c-a13b-aa466926ef32",
+      "name": "Crear evento",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "bZXVDz1cxEYLXlOO",
+          "name": "Google Calendar account AGENT-IA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Utiliza esta herramienta para eliminar eventos del calendario.",
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "divisual@divisualproject.com",
+          "mode": "list",
+          "cachedResultName": "divisual@divisualproject.com"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        2624,
+        1008
+      ],
+      "id": "498e856d-d36c-4bde-acdc-86b7d6b4ce36",
+      "name": "Eliminar evento",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "bZXVDz1cxEYLXlOO",
+          "name": "Google Calendar account AGENT-IA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "divisual@divisualproject.com",
+          "mode": "list",
+          "cachedResultName": "divisual@divisualproject.com"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
+        "updateFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        2880,
+        992
+      ],
+      "id": "b66342fd-84d3-4e6b-9eb4-6ab341d66c8d",
+      "name": "Actualizar evento",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "bZXVDz1cxEYLXlOO",
+          "name": "Google Calendar account AGENT-IA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "divisual@divisualproject.com",
+          "mode": "list",
+          "cachedResultName": "divisual@divisualproject.com"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('After', ``, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Before', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        3024,
+        992
+      ],
+      "id": "ffd22192-d3c2-4300-9131-e003887a719a",
+      "name": "Comprobar disponibilidad",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "bZXVDz1cxEYLXlOO",
+          "name": "Google Calendar account AGENT-IA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "59171890091"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        2480,
+        992
+      ],
+      "id": "e6a19d94-1732-416b-b2df-2c54b34d41eb",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2304,
+        992
+      ],
+      "id": "46f10525-6d2a-4e06-b159-a66806a51b55",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "65OPqIAHmWfOqNeH",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## 📩 Entrada de mensaje mediante Webhook en WaAPI\n",
+        "height": 300,
+        "width": 420
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        528
+      ],
+      "id": "e6d19c84-76c0-47a4-a1a5-0c818f96d28f",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## 🧠 Identificación de mensaje\n\nAquí identificamos si el mensaje recibido es un **audio** o un **texto**.\n\n- Si es **texto**, se envía directamente al agente para su interpretación.\n- Si es **audio**, se redirige a un nodo de tipo `convert to file` para transcribir el contenido a texto, de modo que el agente pueda interpretarlo correctamente.\n",
+        "height": 620,
+        "width": 700,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        192,
+        208
+      ],
+      "id": "43ee89b1-0493-4527-9240-683764d9b10c",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## 🤖 Acción del agente\n\nEn esta zona, el agente entra en acción:\n\n- **Interpreta la información recibida** (ya sea texto o transcripción de audio).\n- **Toma decisiones** en base al contenido del mensaje.\n- **Ejecuta las herramientas disponibles** (como consultas a base de datos, generación de respuestas, acciones en Shopify, etc.) para ofrecer una respuesta adecuada o realizar una tarea automatizada.\n",
+        "height": 984,
+        "width": 960,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        192
+      ],
+      "id": "a5d98833-2bd7-4b19-bdcd-7ed9a42623fc",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## 📤 Respuesta por WhatsApp\n\nEste nodo se encarga de **enviar la respuesta generada por el agente** a la misma conversación de WhatsApp desde donde se recibió el mensaje.\n\n- Mantiene el contexto de la conversación.\n- Utiliza la API de WaAPI para realizar el envío de forma automática.\n",
+        "height": 952,
+        "width": 576,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3136,
+        224
+      ],
+      "id": "f5838a8e-b97d-47e2-b26b-d8f0ec8ec959",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "# 🚀 La Tribu Divisual\n\n## Este agente tiene un valor en el mercado de **$997.**\n\n## Accede a **La Tribu** para aprender a crear agentes mucho más avanzados y a generar altos ingresos con ellos de forma real y segura.\n\n# 👉 [Click aquí para unirte a la Lista de espera](https://divisualproject.academy/)\n",
+        "height": 360,
+        "width": 680,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1824,
+        1200
+      ],
+      "id": "c408bb28-2c2e-438b-b04f-f928d5519ece",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "# 🛠️ Herramientas Utilizadas\n\n| Herramienta        | Descripción                                                                                         | Coste mensual              |\n|--------------------|-----------------------------------------------------------------------------------------------------|-----------------------------|\n\n| **WaAPI**          | Conexión con la API de WhatsApp.                                                                    | $6                          |\n\n| **ChatGPT**        | Transcripción de audios e interpretación de mensajes entrantes para generar respuestas.             | Pago por tokens *(variable)* |\n\n| **Supabase**       | Almacenamiento de la memoria del agente usando PostgreSQL.                                           | $0 *(versión gratuita)*     |\n\n| **Google Calendar**| Gestión de calendario y programación de eventos.                                                    | $0                          |\n\n\n---\n\n## 💰 Coste Total Mensual Estimado\n\n### **$6 (WaAPI) + tokens usados en ChatGPT**\n\n---\n\n**Hecho con ❤️ por [Juan Pe Navarro](https://www.youtube.com/@juanpe.divisual)**\n",
+        "height": 540,
+        "width": 660,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        -112
+      ],
+      "id": "f3b40bb3-d101-4c19-b561-447ba9599e05",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        704,
+        400
+      ],
+      "id": "69c54356-f6c3-4813-9548-be1eb8291fd1",
+      "name": "Transcribir audio",
+      "credentials": {
+        "openAiApi": {
+          "id": "cEf6qtp5xsBjBlzD",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "defa1545-074d-4d6a-a21f-a95c2226995f",
+              "name": "mensaje",
+              "value": "={{ $json.text || $json.transcription || 'Mensaje sin texto' }}",
+              "type": "string"
+            },
+            {
+              "id": "remote-jid",
+              "name": "remoteJid",
+              "value": "={{ $('Edit Fields').item.json.remoteJid }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        992,
+        656
+      ],
+      "id": "a53325b1-aca0-4adf-a824-6c83ad65676c",
+      "name": "Mapear mensaje"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://agent-api.premiumshop.shop/api/v1/procesar-intencion",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"intenciones\": {{ JSON.stringify($json.parsedIntention.intenciones) }},\n  \"usuario_id\": \"{{ $json.parsedIntention.intenciones[0].usuario_id }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2000,
+        656
+      ],
+      "id": "cfa51584-166d-4b6e-a9d9-f940159c5df7",
+      "name": "Contextualizar Backend"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.wasenderapi.com/api/send-message",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"to\": \"{{ $('Edit Fields').item.json.remoteJid }}\",\n  \"text\": {{ JSON.stringify($json.output) }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3232,
+        688
+      ],
+      "id": "bd50eeb2-72d8-4d58-8695-d84370c41abe",
+      "name": "HTTP Request - Respuesta",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "01ZdZe04LEkjKIcb",
+          "name": "Header Auth account"
+        },
+        "httpBearerAuth": {
+          "id": "dTtTjSB2c4mcUkcM",
+          "name": "Bearer Auth Whatssap"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## ⚠️ ATENCIÓN\n\n### Este agente lo puedes conectar también a telegram (lo que te supondría un coste mensual de **$0**\n\nAccede a **La Tribu** para aprender conectar este agente a Telegram.\n\n## 👉 [Click aquí para unirte a la Lista de espera](https://divisualproject.academy/)\n",
+        "height": 240,
+        "width": 540,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        -112
+      ],
+      "id": "f6cced4d-9a5c-4478-856d-1561182906a2",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## 🔍 Parsing de Intención\n\n### Nuevo flujo agregado:\n\n1. **LLM Parsing Intención**: Transforma el mensaje natural en JSON estructurado\n2. **Parsear Respuesta JSON**: Extrae y valida el JSON del LLM\n3. **Validar Intención**: Verifica que la intención sea válida\n4. **Manejo de Errores**: Si hay error, envía respuesta de error\n\n### Beneficios:\n- **Mejor estructuración** de datos antes del backend\n- **Validación temprana** de intenciones\n- **Manejo robusto** de errores\n- **JSON limpio** para el backend\n",
+        "height": 944,
+        "width": 1236,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        912,
+        192
+      ],
+      "id": "134c82ed-af6d-4832-ae23-12916d70682d",
+      "name": "Sticky Note - Parsing Flow"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Edit Fields').item.json.audioUrl.replace('http://localhost:3000', 'https://tu-url-publica.ngrok.io') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        400
+      ],
+      "id": "369ed6ed-a31a-4d8d-8aec-566f1ab3ffbe",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.mensaje }}",
+        "options": {
+          "systemMessage": "Tu tarea es interpretar un mensaje de usuario y extraer TODA la información posible, detectando MÚLTIPLES intenciones si las hay.\npor ahora el user_id = 0a67c5ba-0a46-46f7-a8f8-82d9f4aaa001\nResponde ÚNICAMENTE con JSON válido:\n\n{\n  \"intenciones\": [\n    {\n      \"intencion\": \"create_tarea\",\n      \"usuario_id\": \"{{ user_id }}\",\n      \"datos\": {\n        \"titulo\": \"tarea de matemáticas\",\n        \"descripcion\": \"estudiar matemáticas\",\n        \"fecha_limite\": \"2025-07-31\",\n        \"categoria\": \"estudio\",\n        \"estado\": \"pendiente\"\n      }\n    },\n    {\n      \"intencion\": \"create_evento\",\n      \"usuario_id\": \"{{ user_id }}\",\n      \"datos\": {\n        \"titulo\": \"reunión con Coca Cola\",\n        \"fecha\": \"2025-07-31\",\n        \"hora_inicio\": \"09:00\",\n        \"hora_fin\": \"10:00\",\n        \"ubicacion\": null\n      }\n    }\n  ],\n  \"message\": \"{{ mensaje_usuario }}\"\n}\n\n## INTENCIONES DISPONIBLES:\n\n### CONSULTAS:\n- get_recordatorios (filtros: fecha, prioridad, tipo)\n- get_habitos (filtros: solo_activos, frecuencia)\n- get_tareas (filtros: estado, categoria)\n- get_eventos (filtros: fecha)\n- get_metas (filtros: solo_activas)\n- get_agenda_completa (filtros: fecha_inicio, fecha_fin, incluir_*)\n- get_estadisticas (filtros: periodo)\n\n### CREAR:\n- create_recordatorio (datos: contenido, fecha, hora, prioridad, tipo)\n- create_habito (datos: titulo, frecuencia, hora, dias)\n- create_tarea (datos: titulo, descripcion, fecha_limite, categoria)\n- create_evento (datos: titulo, fecha, hora_inicio, hora_fin, ubicacion)\n- create_meta (datos: descripcion, plazo_final, progreso)\n\n### ACTUALIZAR:\n- update_recordatorio (datos: id, contenido, fecha, hora, prioridad)\n- update_tarea (datos: id, titulo, estado, categoria)\n- update_meta (datos: id, descripcion, progreso)\n\n### ELIMINAR:\n- delete_recordatorio (datos: id)\n- delete_tarea (datos: id)\n- delete_meta (datos: id)\n\n### GENERAL:\n- intencion_general (para preguntas generales, conversación casual, consultas no específicas)\n\n## REGLAS PARA DETECTAR INTENCION_GENERAL:\n\nUsa \"intencion_general\" cuando el mensaje:\n- Es una pregunta general sobre el asistente (\"¿Quién eres?\", \"¿Qué puedes hacer?\")\n- Es conversación casual (\"Hola\", \"¿Cómo estás?\", \"Gracias\")\n- Pide información no específica del sistema (\"¿Qué tiempo hace?\", \"Cuéntame un chiste\")\n- Es una consulta que no corresponde a las intenciones específicas\n- Es una pregunta de conocimiento general o ayuda\n\nNO uses \"intencion_general\" cuando:\n- El mensaje claramente pide crear/consultar/actualizar/eliminar algo específico\n- Hay palabras clave que indican intenciones específicas (recordatorio, tarea, evento, etc.)\n\n## DATOS REQUERIDOS POR TABLA:\n\n### HABITO:\n- titulo: string (obligatorio)\n- frecuencia: \"diaria\" | \"semanal\" | \"mensual\" (obligatorio)\n- hora: \"HH:MM\" (opcional)\n- dias: array de días (opcional)\n\n### RECORDATORIO:\n- contenido: string (obligatorio)\n- fecha: \"YYYY-MM-DD\" (obligatorio)\n- hora: \"HH:MM\" (opcional)\n- prioridad: \"baja\" | \"media\" | \"alta\" (opcional)\n- tipo: \"personal\" | \"trabajo\" | \"salud\" | \"estudio\" (opcional)\n\n### TAREA:\n- titulo: string (obligatorio)\n- descripcion: string (opcional)\n- fecha_limite: \"YYYY-MM-DD\" (opcional)\n- categoria: \"trabajo\" | \"personal\" | \"estudio\" | \"salud\" (opcional)\n- estado: \"pendiente\" | \"en_progreso\" | \"completada\" (opcional)\n\n### EVENTO:\n- titulo: string (obligatorio)\n- fecha: \"YYYY-MM-DD\" (obligatorio)\n- hora_inicio: \"HH:MM\" (obligatorio)\n- hora_fin: \"HH:MM\" (obligatorio)\n- ubicacion: string (opcional)\n\n### META:\n- descripcion: string (obligatorio)\n- plazo_final: \"YYYY-MM-DD\" (obligatorio)\n- progreso: number 0-100 (opcional)\n\n### INTENCION_GENERAL:\n- pregunta: string (el mensaje original del usuario)\n- tipo_pregunta: \"general\" | \"conversacional\" | \"conocimiento\" | \"ayuda\" (opcional)\n\n## EJEMPLOS DE MÚLTIPLES INTENCIONES:\n\n\"Tengo una tarea para mañana de matemáticas agrégala, y también tengo una cita a las 9 para una reunión con Coca Cola\" →\n{\n  \"intenciones\": [\n    {\n      \"intencion\": \"create_tarea\",\n      \"usuario_id\": \"{{ user_id }}\",\n      \"datos\": {\n        \"titulo\": \"tarea de matemáticas\",\n        \"descripcion\": \"estudiar matemáticas\",\n        \"fecha_limite\": \"2025-07-31\",\n        \"categoria\": \"estudio\",\n        \"estado\": \"pendiente\"\n      }\n    },\n    {\n      \"intencion\": \"create_evento\",\n      \"usuario_id\": \"{{ user_id }}\",\n      \"datos\": {\n        \"titulo\": \"reunión con Coca Cola\",\n        \"fecha\": \"2025-07-31\",\n        \"hora_inicio\": \"09:00\",\n        \"hora_fin\": \"10:00\",\n        \"ubicacion\": null\n      }\n    }\n  ],\n  \"message\": \"Tengo una tarea para mañana de matemáticas agrégala, y también tengo una cita a las 9 para una reunión con Coca Cola\"\n}\n\n\"Crear un hábito de ejercicio diario a las 6am y también una meta de bajar 5 kilos en 3 meses\" →\n{\n  \"intenciones\": [\n    {\n      \"intencion\": \"create_habito\",\n      \"usuario_id\": \"{{ user_id }}\",\n      \"datos\": {\n        \"titulo\": \"ejercicio diario\",\n        \"frecuencia\": \"diaria\",\n        \"hora\": \"06:00\",\n        \"dias\": null\n      }\n    },\n    {\n      \"intencion\": \"create_meta\",\n      \"usuario_id\": \"{{ user_id }}\",\n      \"datos\": {\n        \"descripcion\": \"bajar 5 kilos\",\n        \"plazo_final\": \"2025-10-30\",\n        \"progreso\": 0\n      }\n    }\n  ],\n  \"message\": \"Crear un hábito de ejercicio diario a las 6am y también una meta de bajar 5 kilos en 3 meses\"\n}\n\n## EJEMPLOS DE UNA SOLA INTENCIÓN:\n\n\"Quiero crear un hábito para mejorar a cantar a las 8\" →\n{\n  \"intenciones\": [\n    {\n      \"intencion\": \"create_habito\",\n      \"usuario_id\": \"{{ user_id }}\",\n      \"datos\": {\n        \"titulo\": \"mejorar a cantar\",\n        \"frecuencia\": \"diaria\",\n        \"hora\": \"20:00\",\n        \"dias\": null\n      }\n    }\n  ],\n  \"message\": \"Quiero crear un hábito para mejorar a cantar a las 8\"\n}\n\n\"Recuérdame llamar al médico mañana a las 10am\" →\n{\n  \"intenciones\": [\n    {\n      \"intencion\": \"create_recordatorio\",\n      \"usuario_id\": \"{{ user_id }}\",\n      \"datos\": {\n        \"contenido\": \"llamar al médico\",\n        \"fecha\": \"2025-07-31\",\n        \"hora\": \"10:00\",\n        \"prioridad\": \"alta\",\n        \"tipo\": \"salud\"\n      }\n    }\n  ],\n  \"message\": \"Recuérdame llamar al médico mañana a las 10am\"\n}\n\n\"¿Qué recordatorios tengo hoy?\" →\n{\n  \"intenciones\": [\n    {\n      \"intencion\": \"get_recordatorios\",\n      \"usuario_id\": \"{{ user_id }}\",\n      \"filtros\": {\n        \"fecha\": \"2025-07-30\"\n      }\n    }\n  ],\n  \"message\": \"¿Qué recordatorios tengo hoy?\"\n}\n\n## EJEMPLOS DE INTENCION_GENERAL:\n\n\"¿Quién eres?\" →\n{\n  \"intenciones\": [\n    {\n      \"intencion\": \"intencion_general\",\n      \"usuario_id\": \"{{ user_id }}\",\n      \"datos\": {\n        \"pregunta\": \"¿Quién eres?\",\n        \"tipo_pregunta\": \"general\"\n      }\n    }\n  ],\n  \"message\": \"¿Quién eres?\"\n}\n\n\"Hola, ¿cómo estás?\" →\n{\n  \"intenciones\": [\n    {\n      \"intencion\": \"intencion_general\",\n      \"usuario_id\": \"{{ user_id }}\",\n      \"datos\": {\n        \"pregunta\": \"Hola, ¿cómo estás?\",\n        \"tipo_pregunta\": \"conversacional\"\n      }\n    }\n  ],\n  \"message\": \"Hola, ¿cómo estás?\"\n}\n\n\"¿Qué tiempo hace hoy?\" →\n{\n  \"intenciones\": [\n    {\n      \"intencion\": \"intencion_general\",\n      \"usuario_id\": \"{{ user_id }}\",\n      \"datos\": {\n        \"pregunta\": \"¿Qué tiempo hace hoy?\",\n        \"tipo_pregunta\": \"conocimiento\"\n      }\n    }\n  ],\n  \"message\": \"¿Qué tiempo hace hoy?\"\n}\n\n\"Cuéntame un chiste\" →\n{\n  \"intenciones\": [\n    {\n      \"intencion\": \"intencion_general\",\n      \"usuario_id\": \"{{ user_id }}\",\n      \"datos\": {\n        \"pregunta\": \"Cuéntame un chiste\",\n        \"tipo_pregunta\": \"conversacional\"\n      }\n    }\n  ],\n  \"message\": \"Cuéntame un chiste\"\n}\n\n\"¿Qué puedes hacer por mí?\" →\n{\n  \"intenciones\": [\n    {\n      \"intencion\": \"intencion_general\",\n      \"usuario_id\": \"{{ user_id }}\",\n      \"datos\": {\n        \"pregunta\": \"¿Qué puedes hacer por mí?\",\n        \"tipo_pregunta\": \"ayuda\"\n      }\n    }\n  ],\n  \"message\": \"¿Qué puedes hacer por mí?\"\n}\n\nAhora responde con el JSON para: \"{{ mensaje_usuario }}\"\n  ],\n  \"message\": \"Recuérdame llamar al médico mañana a las 10am\"\n}\n\n\"¿Qué recordatorios tengo hoy?\" →\n{\n  \"intenciones\": [\n    {\n      \"intencion\": \"get_recordatorios\",\n      \"usuario_id\": \"167efe59-77f6-4f3f-8f20-2560ddd336db\",\n      \"filtros\": {\n        \"fecha\": \"2025-07-30\"\n      }\n    }\n  ],\n  \"message\": \"¿Qué recordatorios tengo hoy?\"\n}\n\nAhora responde con el JSON para: \"{{ mensaje_usuario }}\"\n## REGLAS IMPORTANTES:\n\n1. SIEMPRE usa el array \"intenciones\" - incluso si solo hay una intención\n2. Detecta MÚLTIPLES intenciones en el mismo mensaje\n3. Extrae TODO lo posible del mensaje\n4. Usa `null` para datos no mencionados\n5. Inferir inteligentemente (ej: \"a las 8\" = \"20:00\", \"mañana\" = fecha de mañana)\n6. Fechas en YYYY-MM-DD\n7. Horas en HH:MM\n8. Solo JSON válido\n9. Mantén el orden de las intenciones como aparecen en el mensaje\n10. Usa \"intencion_general\" para preguntas que no corresponden a intenciones específicas\n\n## DETECCIÓN DE MÚLTIPLES INTENCIONES:\n\n- Conectores: \"y\", \"también\", \"además\", \"por otro lado\"\n- Puntuación: Puntos, comas que separan ideas distintas\n- Cambio de contexto: De tareas a eventos, de hábitos a metas, etc.\n- Tiempo diferente: \"mañana\" vs \"hoy\", diferentes horas\n- Entidades distintas: \"tarea de matemáticas\" vs \"reunión con Coca Cola\"\n\n## BENEFICIOS:\n\n- Máxima extracción de datos del mensaje\n- Múltiples intenciones en un solo mensaje\n- Inteligente - Infiere información implícita\n- Eficiente - Reduce preguntas adicionales\n- Profesional - Respuesta contextual completa\n- Universal - Maneja cualquier tipo de pregunta con intencion_general\n\nLa fecha y hora de hoy es: {{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        1360,
+        656
+      ],
+      "id": "68767597-cd2d-4349-a8e7-bdf27ee802ff",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1264,
+        896
+      ],
+      "id": "e84aa5b7-44ce-4d4b-a88f-36f30d8bdca9",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "65OPqIAHmWfOqNeH",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "59171890091"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1440,
+        896
+      ],
+      "id": "248e8407-ac3e-4bbd-9e48-4dd99144299b",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "try {\n  // Obtener la respuesta del LLM\n  const llmResponse = $input.item.json.output;\n  \n  // Limpiar caracteres de escape y parsear JSON\n  const cleanedResponse = llmResponse\n    .replace(/\\\\n/g, '')           // Remover \\n\n    .replace(/\\\\\"/g, '\"')          // Remover \\\" \n    .replace(/^\"/, '')             // Remover comillas iniciales\n    .replace(/\"$/, '');            // Remover comillas finales\n  \n  // Parsear el JSON limpio\n  const parsedData = JSON.parse(cleanedResponse);\n  \n  return {\n    json: {\n      parsedIntention: parsedData,\n      success: true\n    }\n  };\n} catch (error) {\n  return {\n    json: {\n      error: 'Error al parsear JSON del LLM',\n      originalResponse: $input.item.json.output,\n      parseError: error.message,\n      success: false\n    }\n  };\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        656
+      ],
+      "id": "cbd9b31b-7213-405c-b6de-5c78aa1eb2d9",
+      "name": "Code"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mapear mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear evento": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eliminar evento": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar evento": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Comprobar disponibilidad": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request - Respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribir audio": {
+      "main": [
+        [
+          {
+            "node": "Mapear mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mapear mensaje": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contextualizar Backend": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Transcribir audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Contextualizar Backend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "34c6885e-540f-4992-8c27-719b48cb0fcc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "413c434d7e0236315f1bb90d3bbba0eb047890d39b4ca1131a894af18ac07f72"
+  },
+  "id": "GjygzyaauTpvJuoz",
+  "tags": [
+    {
+      "createdAt": "2025-07-31T14:19:01.949Z",
+      "updatedAt": "2025-07-31T14:19:01.949Z",
+      "id": "4rAuevvqj0eSmLtK",
+      "name": "La Tribu Divisual"
+    },
+    {
+      "createdAt": "2025-07-31T14:19:01.958Z",
+      "updatedAt": "2025-07-31T14:19:01.958Z",
+      "id": "oGDof7CagOfXtpRq",
+      "name": "Curso Adrián Sáenz"
+    }
+  ]
+}

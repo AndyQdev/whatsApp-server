@@ -1,0 +1,20 @@
+-- Crear la base de datos
+CREATE DATABASE wa_gateway;
+
+-- Crear usuario específico para la aplicación
+CREATE USER wagateway WITH PASSWORD 'wa_gateway_2024';
+
+-- Dar todos los permisos al usuario sobre la base de datos
+GRANT ALL PRIVILEGES ON DATABASE wa_gateway TO wagateway;
+
+-- Conectar a la base de datos wa_gateway
+\c wa_gateway
+
+-- Dar permisos de esquema al usuario
+GRANT ALL ON SCHEMA public TO wagateway;
+
+-- Dar permisos para crear tablas
+GRANT CREATE ON SCHEMA public TO wagateway;
+
+-- Salir de psql
+\q

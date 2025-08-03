@@ -1,0 +1,286 @@
+{
+  "info": {
+    "name": "WA Gateway API",
+    "description": "Colección completa para probar el servidor de WhatsApp personalizado",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "health"]
+        },
+        "description": "Verificar que el servidor esté funcionando"
+      },
+      "response": []
+    },
+    {
+      "name": "Server Info",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/info",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "info"]
+        },
+        "description": "Obtener información del servidor"
+      },
+      "response": []
+    },
+    {
+      "name": "List Sessions",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/sessions",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "sessions"]
+        },
+        "description": "Listar todas las sesiones activas"
+      },
+      "response": []
+    },
+    {
+      "name": "Start Session (Sin Webhook)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sessionId\": \"59171890091\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/start-session",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "start-session"]
+        },
+        "description": "Iniciar una nueva sesión de WhatsApp sin webhook específico (usa el global)"
+      },
+      "response": []
+    },
+    {
+      "name": "Start Session (Con Webhook)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sessionId\": \"59171890091\",\n  \"webhookUrl\": \"https://n8n-service.premiumshop.shop/webhook-test/f5b0365d-ee2e-4901-8b8b-7f9ab737c06f\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/start-session",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "start-session"]
+        },
+        "description": "Iniciar una nueva sesión de WhatsApp con webhook específico"
+      },
+      "response": []
+    },
+    {
+      "name": "Session Status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/session/59171890091/status",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "session", "59171890091", "status"]
+        },
+        "description": "Verificar el estado de la sesión del número +59171890091"
+      },
+      "response": []
+    },
+    {
+      "name": "Get QR Code",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/session/59171890091/qr",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "session", "59171890091", "qr"]
+        },
+        "description": "Obtener el código QR para escanear con WhatsApp"
+      },
+      "response": []
+    },
+    {
+      "name": "Configure Webhook",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"webhookUrl\": \"https://n8n-service.premiumshop.shop/webhook-test/f5b0365d-ee2e-4901-8b8b-7f9ab737c06f\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/session/59171890091/webhook",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "session", "59171890091", "webhook"]
+        },
+        "description": "Configurar webhook URL específico para una sesión"
+      },
+      "response": []
+    },
+    {
+      "name": "Send Message",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sessionId\": \"59171890091\",\n  \"to\": \"59176814386\",\n  \"message\": \"Hola, esto es una prueba desde el WA Gateway\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/send-message",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "send-message"]
+        },
+        "description": "Enviar un mensaje desde la sesión activa (cambiar el número de destino)"
+      },
+      "response": []
+    },
+    {
+      "name": "Stop Session",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sessionId\": \"59171890091\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/stop-session",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "stop-session"]
+        },
+        "description": "Detener la sesión de WhatsApp"
+      },
+      "response": []
+    },
+    {
+      "name": "Webhook Response",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sessionId\": \"59171890091\",\n  \"to\": \"59176814386@s.whatsapp.net\",\n  \"reply\": \"Esta es una respuesta de prueba desde n8n\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/webhook-response",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "webhook-response"]
+        },
+        "description": "Simular respuesta desde n8n (cambiar el número de destino)"
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "session_id",
+      "value": "59171890091",
+      "type": "string"
+    },
+    {
+      "key": "webhook_url",
+      "value": "https://n8n-service.premiumshop.shop/webhook-test/f5b0365d-ee2e-4901-8b8b-7f9ab737c06f",
+      "type": "string"
+    }
+  ]
+} 
