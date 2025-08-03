@@ -14,6 +14,10 @@ const options = {
     },
     servers: [
       {
+        url: 'https://whatapi.premiumshop.shop/api',
+        description: 'Servidor de producción'
+      },
+      {
         url: 'http://localhost:3000/api',
         description: 'Servidor de desarrollo'
       }

@@ -19,11 +19,25 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 // Servir archivos estáticos
 app.use('/audio', express.static(path.join(__dirname, 'uploads/audio')));
 
+// Configurar Swagger dinámicamente según el entorno
+const isProduction = process.env.NODE_ENV === 'production';
+const baseUrl = isProduction ? 'https://whatapi.premiumshop.shop' : `http://localhost:${process.env.PORT || 3000}`;
+
 // Documentación Swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs, {
   customCss: '.swagger-ui .topbar { display: none }',
-  customSiteTitle: 'WA Gateway API Documentation'
+  customSiteTitle: 'WA Gateway API Documentation',
+  swaggerOptions: {
+    url: `${baseUrl}/api-docs/swagger.json`,
+    defaultModelsExpandDepth: -1
+  }
 }));
+
+// Endpoint para obtener la especificación Swagger
+app.get('/api-docs/swagger.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpecs);
+});
 
 // Configurar rutas de la API
 require('./api')(app);
@@ -34,12 +48,17 @@ app.get('/', (req, res) => {
     name: 'WA Gateway',
     version: '1.0.0',
     description: 'Servidor de WhatsApp personalizado con auto-reconexión y persistencia',
+    environment: isProduction ? 'production' : 'development',
     documentation: '/api-docs',
     endpoints: {
       api: '/api',
       health: '/api/health',
       info: '/api/info',
       stats: '/api/stats'
+    },
+    servers: {
+      production: 'https://whatapi.premiumshop.shop',
+      development: `http://localhost:${process.env.PORT || 3000}`
     }
   });
 });
@@ -58,6 +77,8 @@ app.use((error, req, res, next) => {
 async function startServer() {
   try {
     console.log('🚀 Starting WA Gateway server...');
+    console.log(`🌍 Environment: ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'}`);
+    console.log(`🔗 Base URL: ${baseUrl}`);
     
     // Inicializar base de datos
     console.log('🗄️ Initializing database...');
@@ -73,11 +94,11 @@ async function startServer() {
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
       console.log('🎉 WA Gateway server is running!');
-      console.log(`📍 Server URL: http://localhost:${PORT}`);
-      console.log(`📚 API Documentation: http://localhost:${PORT}/api-docs`);
-      console.log(`🔗 API Base URL: http://localhost:${PORT}/api`);
-      console.log(`💚 Health Check: http://localhost:${PORT}/api/health`);
-      console.log(`📊 Statistics: http://localhost:${PORT}/api/stats`);
+      console.log(`📍 Server URL: ${baseUrl}`);
+      console.log(`📚 API Documentation: ${baseUrl}/api-docs`);
+      console.log(`🔗 API Base URL: ${baseUrl}/api`);
+      console.log(`💚 Health Check: ${baseUrl}/api/health`);
+      console.log(`📊 Statistics: ${baseUrl}/api/stats`);
     });
     
   } catch (error) {
