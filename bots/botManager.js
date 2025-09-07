@@ -9,6 +9,7 @@ class BotManager {
   constructor() {
     this.bots = new Map(); // sessionId -> { client, status, qr, webhookUrl }
     this.sessionsPath = process.env.WHATSAPP_DATA_PATH || './sessions';
+    this.socketManager = null; // Se inyectará después de la inicialización
   }
 
   async initialize() {
@@ -82,17 +83,81 @@ class BotManager {
       // Crear sesión en la base de datos
       await databaseService.createSession(sessionId, null, webhookUrl);
       
-      // Crear el bot
+      // Crear el bot y esperar el QR
       const botData = await createBot(sessionId, this, webhookUrl);
       this.bots.set(sessionId, botData);
       
+      // Esperar hasta 30 segundos por el QR o hasta que esté listo
+      const qrCode = await this.waitForQR(sessionId, 30000);
+      
       console.log(`✅ Session started: ${sessionId}`);
-      return { success: true, sessionId, status: 'initializing' };
+      
+      return { 
+        success: true, 
+        sessionId, 
+        status: qrCode ? 'qr_ready' : 'initializing',
+        qr: qrCode,
+        message: qrCode ? 'QR generado exitosamente' : 'Sesión iniciada, generando QR...'
+      };
     } catch (error) {
       console.error(`❌ Error starting session ${sessionId}:`, error);
       await databaseService.updateSessionStatus(sessionId, 'error');
       return { success: false, error: error.message };
     }
+  }
+
+  /**
+   * Esperar a que se genere el código QR para una sesión
+   */
+  async waitForQR(sessionId, timeout = 30000) {
+    return new Promise((resolve) => {
+      const startTime = Date.now();
+      
+      const checkForQR = async () => {
+        try {
+          const bot = this.bots.get(sessionId);
+          const dbSession = await databaseService.getSession(sessionId);
+          
+          // Verificar si ya tenemos QR
+          if (bot && bot.qr) {
+            resolve(bot.qr);
+            return;
+          }
+          
+          if (dbSession && dbSession.qr_code) {
+            resolve(dbSession.qr_code);
+            return;
+          }
+          
+          // Verificar si ya está autenticado (sin QR)
+          if (bot && bot.status === 'ready') {
+            resolve(null);
+            return;
+          }
+          
+          if (dbSession && dbSession.status === 'ready') {
+            resolve(null);
+            return;
+          }
+          
+          // Verificar timeout
+          if (Date.now() - startTime >= timeout) {
+            console.log(`⏰ Timeout waiting for QR for session: ${sessionId}`);
+            resolve(null);
+            return;
+          }
+          
+          // Continuar verificando cada 500ms
+          setTimeout(checkForQR, 500);
+          
+        } catch (error) {
+          console.error(`❌ Error checking QR for session ${sessionId}:`, error);
+          resolve(null);
+        }
+      };
+      
+      checkForQR();
+    });
   }
 
   async stopSession(sessionId) {
@@ -171,6 +236,16 @@ class BotManager {
 
       // Actualizar en base de datos
       await databaseService.updateSessionStatus(sessionId, status, phoneNumber, qr);
+      
+      // Emitir evento Socket.IO en tiempo real
+      if (this.socketManager) {
+        this.socketManager.emitToSession(sessionId, 'status_changed', {
+          status,
+          phoneNumber,
+          qr,
+          timestamp: new Date().toISOString()
+        });
+      }
       
       console.log(`📊 Session ${sessionId} status updated to: ${status}`);
     } catch (error) {
@@ -285,6 +360,12 @@ class BotManager {
     } catch (error) {
       console.error('❌ Error in BotManager cleanup:', error);
     }
+  }
+
+  // Método para inyectar el socketManager
+  setSocketManager(socketManager) {
+    this.socketManager = socketManager;
+    console.log('✅ SocketManager injected into BotManager');
   }
 }
 

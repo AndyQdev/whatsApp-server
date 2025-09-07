@@ -119,6 +119,21 @@ async function sendToWebhook(messageData, sessionId, botManager) {
       throw new Error('No hay webhook URL configurado para esta sesión');
     }
 
+    // Obtener datos de sesión desde ventas-service
+    let userId = null;
+    let storeId = null;
+    try {
+      const ventasServiceUrl = process.env.VENTAS_SERVICE_URL || 'http://localhost:3001';
+      const sessionInfoResp = await axios.get(`${ventasServiceUrl}/api/whatsapp/session/${sessionId}`);
+      console.log('URL: ', `${ventasServiceUrl}/api/whatsapp/session/${sessionId}`);
+      console.log('SESSIONID: ', sessionId);
+      console.log('Session INFO:', sessionInfoResp.data);
+      userId = sessionInfoResp.data.userId;
+      storeId = sessionInfoResp.data.storeId;
+    } catch (err) {
+      console.error('No se pudo obtener userId/storeId desde ventas-service:', err.response?.data || err.message);
+    }
+
     // Formatear datos para el webhook
     const webhookData = {
       body: {
@@ -135,7 +150,10 @@ async function sendToWebhook(messageData, sessionId, botManager) {
                 fileLength: messageData.audioDuration ? messageData.audioDuration.toString() : '0'
               } : null
             }
-          }
+          },
+          userId,
+          storeId,
+          sessionId
         }
       }
     };
@@ -159,7 +177,6 @@ async function sendToWebhook(messageData, sessionId, botManager) {
 
   } catch (error) {
     console.error(`❌ Error sending to webhook:`, error.response?.data || error.message);
-    
     // Guardar error en base de datos
     await databaseService.saveMessage(
       sessionId,

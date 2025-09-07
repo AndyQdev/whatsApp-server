@@ -5,11 +5,14 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerSpecs = require('./config/swagger');
 const { setupBotManager, botManager } = require('./bots/botManager');
 const { createTables } = require('./scripts/init-database');
+const http = require('http');
+const { socketManager } = require('./websocket/socketManager');
 
 // Cargar variables de entorno
 require('dotenv').config();
 
 const app = express();
+const server = http.createServer(app);
 
 // Middleware
 app.use(cors());
@@ -90,9 +93,17 @@ async function startServer() {
     await setupBotManager();
     console.log('✅ BotManager initialized');
     
+    // Inicializar Socket.IO
+    console.log('📡 Initializing Socket.IO...');
+    socketManager.initialize(server);
+    console.log('✅ Socket.IO initialized');
+    
+    // Inyectar socketManager en botManager
+    botManager.setSocketManager(socketManager);
+    
     // Iniciar servidor
     const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log('🎉 WA Gateway server is running!');
       console.log(`📍 Server URL: ${baseUrl}`);
       console.log(`📚 API Documentation: ${baseUrl}/api-docs`);

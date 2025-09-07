@@ -3,6 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const { botManager } = require('../bots/botManager');
 const databaseService = require('../services/databaseService');
+const { socketManager } = require('../websocket/socketManager');
 
 module.exports = (app) => {
   const router = express.Router();
@@ -59,11 +60,14 @@ module.exports = (app) => {
   router.post('/start-session', async (req, res) => {
     try {
       const { sessionId, webhookUrl } = req.body;
-      
       if (!sessionId) {
         return res.status(400).json({ success: false, error: 'sessionId es requerido' });
       }
-
+      // Si ya existe una sesión y no está lista, primero la detenemos
+      const statusResult = await botManager.getSessionStatus(sessionId);
+      if (statusResult.success && statusResult.status !== 'ready') {
+        await botManager.stopSession(sessionId);
+      }
       const result = await botManager.startSession(sessionId, webhookUrl);
       res.json(result);
     } catch (error) {
@@ -597,6 +601,90 @@ module.exports = (app) => {
     });
   });
 
+  /**
+   * @swagger
+   * /websocket/stats:
+   *   get:
+   *     summary: Estadísticas de conexiones WebSocket
+   *     tags: [WebSocket]
+   *     responses:
+   *       200:
+   *         description: Estadísticas de conexiones Socket.IO
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 success:
+   *                   type: boolean
+   *                 data:
+   *                   type: object
+   *                   properties:
+   *                     totalConnections:
+   *                       type: number
+   *                     sessionsWithClients:
+   *                       type: number
+   *                     sessionDetails:
+   *                       type: object
+   */
+  router.get('/websocket/stats', (req, res) => {
+    try {
+      const stats = socketManager.getConnectionStats();
+      res.json({
+        success: true,
+        data: stats,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('❌ Error getting websocket stats:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Error obteniendo estadísticas de WebSocket',
+        message: error.message
+      });
+    }
+  });
+    // ===== TESTING WEBHOOK =====
+
+  /**
+   * @swagger
+   * /test-webhook:
+   *   post:
+   *     summary: Test manual de envío de webhook (simula mensaje entrante)
+   *     tags: [Testing]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - sessionId
+   *               - messageData
+   *             properties:
+   *               sessionId:
+   *                 type: string
+   *                 description: ID de la sesión activa
+   *               messageData:
+   *                 type: object
+   *                 description: Objeto de datos del mensaje (from, to, message, audioUrl, audioDuration)
+   *     responses:
+   *       200:
+   *         description: Webhook enviado exitosamente
+   */
+  const { sendToWebhook } = require('../services/messageReceiver');
+  router.post('/test-webhook', async (req, res) => {
+    try {
+      const { sessionId, messageData } = req.body;
+      if (!sessionId || !messageData) {
+        return res.status(400).json({ success: false, error: 'sessionId y messageData son requeridos' });
+      }
+      await sendToWebhook(messageData, sessionId, botManager);
+      res.json({ success: true, message: 'Webhook enviado (ver logs del servidor)' });
+    } catch (error) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
   // 404 handler
   router.use('*', (req, res) => {
     res.status(404).json({
